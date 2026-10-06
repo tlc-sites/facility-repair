@@ -1,0 +1,816 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#183B56">
+<title>시설 보수 신청 | 주님의교회</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<style>
+  :root {
+    --navy: #183B56;
+    --navy-dark: #102A3D;
+    --orange: #D9772B;
+    --mist: #E6EEF2;
+    --ink: #17232d;
+    --text: #334155;
+    --muted: #64727d;
+    --line: #d7e1e7;
+    --soft: #f4f7f9;
+    --rose: #be123c;
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    font-family: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+    font-size: 17px;
+    line-height: 1.6;
+    color: var(--ink);
+    background: radial-gradient(circle at top right, rgba(24,59,86,0.10), transparent 32%), linear-gradient(180deg, #F8FAFB 0%, #EAF0F3 100%);
+    min-height: 100vh;
+    word-break: keep-all;
+    overflow-wrap: anywhere;
+  }
+  body.admin-body { background: #f8fafc; }
+  body.admin-body .topbar-in { max-width: 1280px; }
+  button, input, select, textarea { font: inherit; color: inherit; }
+  a { color: inherit; }
+  .hidden { display: none !important; }
+  .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  svg.i { width: 1em; height: 1em; flex: none; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+  /* 상단 */
+  .topbar { border-bottom: 1px solid rgba(24,59,86,0.10); background: rgba(255,255,255,0.92); backdrop-filter: blur(8px); position: sticky; top: 0; z-index: 20; }
+  .topbar-in { max-width: 1152px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px 20px; }
+  .brand { display: flex; align-items: center; gap: 12px; text-decoration: none; }
+  .brand-mark { position: relative; display: grid; place-items: center; width: 42px; height: 42px; border-radius: 12px; background: var(--navy); color: #fff; font-size: 21px; box-shadow: 0 1px 2px rgba(0,0,0,.08); }
+  .brand-mark .sub { position: absolute; right: -5px; bottom: -5px; width: 21px; height: 21px; border-radius: 50%; border: 2px solid #fff; background: var(--orange); display: grid; place-items: center; font-size: 11px; }
+  .brand-name { display: block; font-size: 16px; font-weight: 700; color: var(--navy); letter-spacing: -0.01em; line-height: 1.3; }
+  .brand-sub { display: block; font-size: 14px; color: var(--muted); line-height: 1.3; }
+  .badge-top { display: none; align-items: center; gap: 6px; border-radius: 999px; background: var(--mist); padding: 6px 12px; font-size: 14px; font-weight: 600; color: var(--navy); }
+  @media (min-width: 640px) { .badge-top { display: inline-flex; } }
+
+  /* 신청 화면 */
+  .page { max-width: 1152px; margin: 0 auto; padding: 28px 18px 40px; display: grid; gap: 30px; }
+  @media (min-width: 1024px) { .page { grid-template-columns: 0.72fr 1.28fr; gap: 56px; padding: 48px 32px; } .intro { position: sticky; top: 100px; align-self: start; } }
+  .eyebrow { margin: 0 0 14px; font-size: 15px; font-weight: 700; letter-spacing: 0.14em; color: var(--orange); }
+  .hero-title { margin: 0; font-size: 36px; line-height: 1.2; font-weight: 800; letter-spacing: -0.04em; white-space: pre-line; color: #0f172a; }
+  @media (min-width: 640px) { .hero-title { font-size: 46px; } }
+  .hero-desc { margin: 18px 0 0; color: #475569; font-size: 17px; line-height: 1.75; }
+  .steps { margin-top: 26px; display: grid; gap: 10px; }
+  .step { display: flex; gap: 14px; border: 1px solid rgba(255,255,255,0.8); background: rgba(255,255,255,0.7); border-radius: 18px; padding: 15px 16px; box-shadow: 0 12px 32px rgba(15,45,35,0.05); }
+  .step-num { font-family: ui-monospace, Menlo, monospace; font-size: 14px; font-weight: 700; color: var(--orange); padding-top: 1px; }
+  .step-title { margin: 0; font-size: 16px; font-weight: 700; color: #0f172a; }
+  .step-desc { margin: 2px 0 0; font-size: 15px; color: var(--muted); line-height: 1.5; }
+  .safety { margin-top: 22px; border: 1px solid rgba(253,230,138,0.8); background: rgba(255,251,235,0.9); border-radius: 18px; padding: 16px; font-size: 16px; line-height: 1.65; color: #78350f; }
+
+  .card { background: #fff; border: 1px solid rgba(24,59,86,0.10); border-radius: 26px; box-shadow: 0 24px 70px rgba(24,59,86,0.12); overflow: hidden; }
+  .form-head { padding: 24px 22px; border-bottom: 1px solid #f1f5f9; }
+  .form-head-row { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+  .form-eyebrow { margin: 0; font-size: 15px; font-weight: 700; color: var(--orange); }
+  .form-title { margin: 4px 0 0; font-size: 25px; font-weight: 800; letter-spacing: -0.02em; color: #0f172a; }
+  .form-head .cam { font-size: 30px; color: rgba(24,59,86,0.45); }
+  .req-note { margin: 8px 0 0; font-size: 15px; color: var(--muted); }
+  .req { color: #e11d48; font-weight: 700; }
+  .form-body { padding: 26px 22px 30px; display: grid; gap: 36px; }
+  @media (min-width: 640px) { .form-head, .form-body { padding-left: 32px; padding-right: 32px; } }
+  fieldset { border: 0; margin: 0; padding: 0; min-width: 0; }
+  .section-label { display: flex; align-items: center; gap: 10px; padding: 0; font-size: 19px; font-weight: 800; color: #0f172a; }
+  .section-label span { display: grid; place-items: center; width: 28px; height: 28px; border-radius: 9px; background: var(--navy); color: #fff; font-size: 15px; font-weight: 700; }
+  .grid2 { display: grid; gap: 16px; margin-top: 16px; }
+  @media (min-width: 640px) { .grid2 { grid-template-columns: 1fr 1fr; } }
+  .field-label { display: block; font-size: 16px; font-weight: 700; color: #1e293b; }
+  .field-label b { color: #e11d48; }
+  .hint { margin: 6px 0 0; font-size: 15px; color: var(--muted); line-height: 1.6; }
+  .input, .select, .textarea {
+    display: block; width: 100%; margin-top: 8px; border: 1px solid #cbd5e1; background: rgba(248,250,252,0.8);
+    border-radius: 13px; padding: 13px 15px; font-size: 17px; outline: none; transition: border-color .15s, box-shadow .15s;
+  }
+  .input, .select { min-height: 54px; }
+  .textarea { min-height: 150px; resize: vertical; line-height: 1.6; }
+  .input:focus, .select:focus, .textarea:focus { border-color: var(--orange); box-shadow: 0 0 0 3px rgba(217,119,43,0.18); background: #fff; }
+  .select { appearance: none; -webkit-appearance: none; padding-right: 44px; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%2364727d' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; }
+
+  .choice-list { display: grid; gap: 9px; margin-top: 12px; }
+  .choice-grid { display: grid; gap: 9px; margin-top: 16px; }
+  @media (min-width: 640px) { .choice-grid { grid-template-columns: 1fr 1fr; } }
+  .choice { display: flex; align-items: center; gap: 12px; min-height: 56px; border: 1px solid #e2e8f0; background: #fff; border-radius: 13px; padding: 12px 15px; font-size: 16px; font-weight: 600; color: #334155; cursor: pointer; transition: all .15s; }
+  .choice:hover { border-color: rgba(24,59,86,0.25); background: rgba(230,238,242,0.4); }
+  .choice.on { border-color: rgba(24,59,86,0.4); background: var(--mist); color: var(--navy); box-shadow: 0 1px 2px rgba(0,0,0,0.04); }
+  .choice input { width: 22px; height: 22px; margin: 0; accent-color: var(--navy); flex: none; }
+  .examples { margin-top: 16px; border: 1px solid rgba(24,59,86,0.10); background: rgba(230,238,242,0.55); border-radius: 18px; padding: 16px; }
+  .examples p { margin: 0; font-size: 16px; font-weight: 700; color: var(--navy); }
+  .examples ul { margin: 8px 0 0; padding: 0; list-style: none; display: grid; gap: 6px; font-size: 15.5px; color: #475569; line-height: 1.6; }
+  .mt { margin-top: 20px; }
+
+  .photos { display: grid; gap: 12px; margin-top: 16px; }
+  @media (min-width: 640px) { .photos { grid-template-columns: 1fr 1fr; } }
+  .photo-box { border: 1.5px dashed rgba(24,59,86,0.22); background: rgba(230,238,242,0.35); border-radius: 18px; padding: 12px; }
+  .photo-pick { display: flex; min-height: 180px; flex-direction: column; align-items: center; justify-content: center; text-align: center; border-radius: 13px; padding: 14px; cursor: pointer; }
+  .photo-pick:hover { background: rgba(230,238,242,0.7); }
+  .photo-icon { display: grid; place-items: center; width: 48px; height: 48px; border-radius: 50%; background: #fff; color: var(--navy); font-size: 22px; box-shadow: 0 1px 3px rgba(0,0,0,.08); margin-bottom: 10px; }
+  .photo-name { font-size: 16px; font-weight: 700; color: #0f172a; }
+  .photo-desc { margin-top: 4px; font-size: 14.5px; color: var(--muted); line-height: 1.5; }
+  .photo-btn { margin-top: 12px; border-radius: 999px; background: var(--navy); color: #fff; padding: 9px 18px; font-size: 15px; font-weight: 700; }
+  .photo-preview { position: relative; border-radius: 13px; overflow: hidden; background: #f1f5f9; }
+  .photo-preview img { display: block; width: 100%; height: 190px; object-fit: cover; }
+  .photo-remove { position: absolute; top: 10px; right: 10px; width: 40px; height: 40px; border: 0; border-radius: 50%; background: rgba(0,0,0,0.65); color: #fff; display: grid; place-items: center; font-size: 18px; cursor: pointer; }
+  .photo-cap { position: absolute; left: 0; right: 0; bottom: 0; padding: 26px 12px 10px; background: linear-gradient(to top, rgba(0,0,0,.7), transparent); color: #fff; font-size: 14px; font-weight: 600; }
+
+  .cost { display: flex; align-items: flex-start; gap: 12px; border: 1px solid #e2e8f0; background: #f8fafc; border-radius: 18px; padding: 16px; cursor: pointer; }
+  .cost input { width: 22px; height: 22px; margin: 2px 0 0; accent-color: var(--navy); flex: none; }
+  .cost span { font-size: 16px; line-height: 1.65; color: #475569; }
+  .alert { border: 1px solid #fecdd3; background: #fff1f2; color: var(--rose); border-radius: 13px; padding: 13px 16px; font-size: 16px; font-weight: 600; }
+  .form-foot { border-top: 1px solid #f1f5f9; background: rgba(248,250,252,0.8); padding: 20px 22px; }
+  @media (min-width: 640px) { .form-foot { padding: 20px 32px; } }
+  .btn-primary { display: flex; width: 100%; min-height: 58px; align-items: center; justify-content: center; gap: 8px; border: 0; border-radius: 14px; background: var(--navy); color: #fff; font-size: 18px; font-weight: 800; box-shadow: 0 10px 24px rgba(24,59,86,0.22); cursor: pointer; transition: background .15s; }
+  .btn-primary:hover { background: var(--navy-dark); }
+  .btn-primary:disabled { opacity: .7; cursor: wait; }
+  .btn-outline { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 52px; border: 1px solid #cbd5e1; background: #fff; border-radius: 13px; padding: 0 22px; font-size: 17px; font-weight: 700; cursor: pointer; text-decoration: none; }
+  .btn-outline:hover { background: #f8fafc; }
+  .spin { animation: spin 1s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .success { display: flex; min-height: 560px; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 40px 26px; }
+  .success-mark { display: grid; place-items: center; width: 84px; height: 84px; border-radius: 50%; background: var(--mist); color: var(--navy); font-size: 38px; }
+  .success h2 { margin: 6px 0 0; font-size: 29px; font-weight: 800; letter-spacing: -0.02em; }
+  .success .desc { margin: 16px 0 0; max-width: 440px; font-size: 17px; line-height: 1.75; color: #475569; white-space: pre-line; }
+  .ref-box { margin-top: 26px; border-radius: 18px; background: #f8fafc; padding: 16px 26px; }
+  .ref-box small { display: block; font-size: 14px; color: var(--muted); }
+  .ref-box strong { display: block; margin-top: 4px; font-family: ui-monospace, Menlo, monospace; font-size: 21px; letter-spacing: 0.06em; color: var(--navy); }
+  .ref-tip { margin: 10px 0 0; font-size: 14.5px; color: var(--muted); }
+
+  footer { border-top: 1px solid rgba(24,59,86,0.10); background: rgba(255,255,255,0.7); padding: 22px 20px; text-align: center; font-size: 14.5px; color: var(--muted); }
+
+  /* 관리 화면 */
+  .wrap { max-width: 1280px; margin: 0 auto; padding: 26px 18px 48px; }
+  @media (min-width: 640px) { .wrap { padding: 40px 32px; } }
+  .login-card { max-width: 420px; margin: 40px auto; padding: 32px 26px; text-align: center; }
+  .login-card .lock { display: grid; place-items: center; width: 60px; height: 60px; margin: 0 auto 14px; border-radius: 16px; background: var(--navy); color: #fff; font-size: 26px; }
+  .login-card h1 { margin: 0; font-size: 26px; font-weight: 800; }
+  .login-card p { margin: 8px 0 22px; color: var(--muted); font-size: 16px; }
+  .login-card form { display: grid; gap: 14px; text-align: left; }
+  .admin-head { display: flex; flex-direction: column; gap: 14px; }
+  @media (min-width: 640px) { .admin-head { flex-direction: row; align-items: flex-end; justify-content: space-between; } }
+  .admin-head .kicker { margin: 0; font-size: 15px; font-weight: 700; color: #047857; }
+  .admin-head h1 { margin: 4px 0 0; font-size: 30px; font-weight: 800; letter-spacing: -0.02em; }
+  .admin-head .sub { margin: 6px 0 0; font-size: 16px; color: var(--muted); }
+  .admin-links { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+  .link-text { font-size: 16px; font-weight: 700; color: #065f46; text-decoration: none; padding: 10px 4px; }
+  .link-text:hover { text-decoration: underline; }
+  .btn-small { display: inline-flex; align-items: center; gap: 7px; min-height: 46px; border: 1px solid #e2e8f0; background: #fff; border-radius: 11px; padding: 0 14px; font-size: 16px; font-weight: 700; color: #334155; text-decoration: none; cursor: pointer; box-shadow: 0 1px 2px rgba(0,0,0,.04); }
+  .btn-small:hover { background: #f8fafc; }
+  .stats { margin-top: 24px; display: grid; gap: 10px; grid-template-columns: 1fr 1fr; }
+  @media (min-width: 1024px) { .stats { grid-template-columns: repeat(4, 1fr); } }
+  .stat { border: 1px solid #e2e8f0; background: #fff; border-radius: 18px; padding: 16px 18px; box-shadow: 0 1px 2px rgba(0,0,0,.04); }
+  .stat-top { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+  .stat-top p { margin: 0; font-size: 15px; font-weight: 700; color: var(--muted); }
+  .stat-ic { display: grid; place-items: center; width: 36px; height: 36px; border-radius: 11px; font-size: 17px; }
+  .stat-num { margin: 8px 0 0; font-size: 30px; font-weight: 800; letter-spacing: -0.02em; }
+  .panel { margin-top: 20px; border: 1px solid #e2e8f0; background: #fff; border-radius: 18px; overflow: hidden; box-shadow: 0 1px 2px rgba(0,0,0,.04); }
+  .panel-tools { display: flex; flex-direction: column; gap: 10px; padding: 14px; border-bottom: 1px solid #f1f5f9; }
+  @media (min-width: 640px) { .panel-tools { flex-direction: row; justify-content: space-between; align-items: center; } }
+  .search { position: relative; flex: 1; max-width: 420px; }
+  .search .i { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: #94a3b8; font-size: 18px; }
+  .search .input { margin: 0; padding-left: 44px; min-height: 50px; }
+  .panel-tools .select { margin: 0; min-height: 50px; }
+  @media (min-width: 640px) { .panel-tools .select { width: 170px; } }
+  .empty { display: flex; min-height: 240px; flex-direction: column; align-items: center; justify-content: center; text-align: center; color: var(--muted); padding: 20px; }
+  .empty strong { color: #334155; font-size: 17px; margin-top: 10px; }
+  .rows { list-style: none; margin: 0; padding: 0; }
+  .row { display: grid; grid-template-columns: 1fr auto; gap: 6px 12px; align-items: center; padding: 16px; border-bottom: 1px solid #f1f5f9; }
+  .row:last-child { border-bottom: 0; }
+  .row-ref { font-family: ui-monospace, Menlo, monospace; font-size: 14px; font-weight: 700; color: #475569; }
+  .row-main { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; }
+  .row-name { font-size: 17px; font-weight: 700; color: #0f172a; }
+  .row-meta { grid-column: 1 / 2; font-size: 15px; color: var(--muted); }
+  .row-act { grid-row: 1 / span 2; grid-column: 2; }
+  @media (min-width: 900px) {
+    .row { grid-template-columns: 190px 140px minmax(0,1fr) 90px 100px 90px; gap: 12px; padding: 14px 20px; }
+    .row-main, .row-meta { display: contents; }
+    .row-act { grid-row: auto; grid-column: auto; text-align: right; }
+    .row-loc { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: #475569; font-size: 16px; }
+    .row-date { color: var(--muted); font-size: 15px; }
+    .row-head { display: grid !important; background: rgba(248,250,252,0.9); font-size: 14px; font-weight: 700; color: var(--muted); padding: 12px 20px; }
+  }
+  .row-head { display: none; }
+  .row-date::before { content: " · "; }
+  @media (min-width: 900px) { .row-date::before { content: none; } }
+  .pill { display: inline-flex; align-items: center; border: 1px solid; border-radius: 999px; padding: 3px 11px; font-size: 14px; font-weight: 700; white-space: nowrap; }
+  .tone-접수 { border-color: #bfdbfe; background: #eff6ff; color: #1d4ed8; }
+  .tone-확인 { border-color: #fde68a; background: #fffbeb; color: #b45309; }
+  .tone-수리 { border-color: #ddd6fe; background: #f5f3ff; color: #6d28d9; }
+  .tone-완료 { border-color: #a7f3d0; background: #ecfdf5; color: #047857; }
+  .btn-detail { min-height: 44px; border: 1px solid #cbd5e1; background: #fff; border-radius: 10px; padding: 0 16px; font-size: 16px; font-weight: 700; cursor: pointer; }
+  .btn-detail:hover { background: #f8fafc; }
+  .loading { display: flex; min-height: 240px; align-items: center; justify-content: center; gap: 10px; color: var(--muted); font-size: 16px; }
+
+  .drawer-bg { position: fixed; inset: 0; background: rgba(15,23,42,0.45); z-index: 40; }
+  .drawer { position: fixed; top: 0; right: 0; bottom: 0; width: 100%; max-width: 520px; background: #fff; z-index: 41; overflow-y: auto; box-shadow: -10px 0 40px rgba(0,0,0,0.15); }
+  .drawer-head { position: sticky; top: 0; background: #fff; border-bottom: 1px solid #f1f5f9; padding: 20px 22px; display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; z-index: 1; }
+  .drawer-head small { font-family: ui-monospace, Menlo, monospace; font-size: 14px; font-weight: 700; color: #047857; }
+  .drawer-head h2 { margin: 2px 0 0; font-size: 24px; font-weight: 800; }
+  .x-btn { width: 46px; height: 46px; border: 1px solid #e2e8f0; background: #fff; border-radius: 12px; font-size: 20px; display: grid; place-items: center; cursor: pointer; flex: none; }
+  .drawer-body { padding: 22px; display: grid; gap: 22px; }
+  .two { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .mini { border-radius: 13px; background: #f8fafc; padding: 14px; }
+  .mini small { display: block; font-size: 14px; color: #94a3b8; margin-top: 6px; }
+  .mini .val { display: block; margin-top: 2px; font-size: 17px; font-weight: 700; text-decoration: none; }
+  .mini a.val { color: #065f46; }
+  .d-title { margin: 0; display: flex; align-items: center; gap: 8px; font-size: 16px; font-weight: 800; color: #1e293b; }
+  .d-box { margin-top: 8px; border-radius: 13px; background: #f8fafc; padding: 14px 16px; font-size: 16px; line-height: 1.65; color: #334155; white-space: pre-wrap; }
+  .d-box.green { border: 1px solid rgba(6,78,59,0.1); background: #ecfdf5; color: #064e3b; font-weight: 600; }
+  .tags { margin-top: 8px; display: flex; flex-wrap: wrap; gap: 6px; }
+  .tag { border-radius: 8px; background: #ecfdf5; color: #065f46; padding: 4px 10px; font-size: 15px; font-weight: 600; }
+  .shots { margin-top: 8px; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .shot { border: 1px solid #e2e8f0; border-radius: 13px; overflow: hidden; background: #f8fafc; padding: 0; cursor: zoom-in; text-align: left; }
+  .shot .ph { height: 140px; display: grid; place-items: center; color: #94a3b8; font-size: 14px; }
+  .shot img { display: block; width: 100%; height: 140px; object-fit: cover; }
+  .shot span { display: block; padding: 8px 12px; font-size: 14.5px; font-weight: 700; color: #475569; }
+  .light { position: fixed; inset: 0; background: rgba(0,0,0,0.88); z-index: 60; display: grid; place-items: center; padding: 16px; }
+  .light img { max-width: 100%; max-height: 88vh; border-radius: 8px; }
+  .light .x-btn { position: absolute; top: 14px; right: 14px; }
+  .toast { position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%); background: #0f172a; color: #fff; padding: 12px 20px; border-radius: 12px; font-size: 16px; z-index: 80; box-shadow: 0 10px 30px rgba(0,0,0,.2); max-width: calc(100% - 32px); }
+</style>
+</head>
+<body>
+<div id="root"></div>
+<div id="toast" class="toast hidden" role="status"></div>
+
+<script>
+// ▼ Apps Script 웹 앱 주소 (배포 주소가 바뀌면 여기만 고치면 됩니다)
+var API_URL = 'https://script.google.com/macros/s/AKfycby7zI3KpquAWIIgNLbNGEN-C9vsKMUyizpfU0ZRGNhiogtzuhcdzlLBCzVD_BO5Na6x2w/exec';
+var BOOT = {
+  mode: new URLSearchParams(location.search).get('admin') === '1' ? 'admin' : 'public',
+  baseUrl: location.origin + location.pathname,
+  settings: null
+};
+</script>
+<script>
+(function () {
+  'use strict';
+
+  // ── 공통 도우미 ─────────────────────────────
+  var S = null;
+  var C = {};
+  var root = document.getElementById('root');
+
+  function esc(v) {
+    return String(v == null ? '' : v).replace(/[&<>"']/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+  }
+  var ICONS = {
+    building: '<rect x="4" y="2" width="16" height="20" rx="2"/><path d="M9 22v-4h6v4M8 6h.01M16 6h.01M12 6h.01M12 10h.01M12 14h.01M16 10h.01M16 14h.01M8 10h.01M8 14h.01"/>',
+    wrench: '<path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>',
+    shield: '<path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/>',
+    camera: '<path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/>',
+    imagePlus: '<path d="M16 5h6M19 2v6M21 11.5V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7.5"/><path d="m21 15-3.09-3.09a2 2 0 0 0-2.82 0L6 21"/><circle cx="9" cy="9" r="2"/>',
+    x: '<path d="M18 6 6 18M6 6l12 12"/>',
+    check: '<path d="M20 6 9 17l-5-5"/>',
+    send: '<path d="m22 2-7 20-4-9-9-4z"/><path d="M22 2 11 13"/>',
+    chevron: '<path d="m9 18 6-6-6-6"/>',
+    rotate: '<path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/>',
+    loader: '<path d="M21 12a9 9 0 1 1-6.22-8.56"/>',
+    search: '<circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>',
+    clipboard: '<rect width="8" height="4" x="8" y="2" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2M12 11h4M12 16h4M8 11h.01M8 16h.01"/>',
+    calendar: '<rect width="18" height="18" x="3" y="4" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>',
+    checkCircle: '<circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/>',
+    pin: '<path d="M20 10c0 4.99-5.54 10.19-7.4 11.8a1 1 0 0 1-1.2 0C9.54 20.19 4 14.99 4 10a8 8 0 0 1 16 0"/><circle cx="12" cy="10" r="3"/>',
+    phone: '<path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.8 19.8 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.12 4.18 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/>',
+    user: '<circle cx="12" cy="8" r="5"/><path d="M20 21a8 8 0 0 0-16 0"/>',
+    settings: '<path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/>',
+    logout: '<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/>',
+    image: '<rect width="18" height="18" x="3" y="3" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.09-3.09a2 2 0 0 0-2.82 0L6 21"/>',
+    lock: '<rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>'
+  };
+  function icon(name, cls) {
+    return '<svg class="i ' + (cls || '') + '" viewBox="0 0 24 24" aria-hidden="true">' + ICONS[name] + '</svg>';
+  }
+  // 저장 서버(Apps Script)와 주고받기 — 로그인 정보(쿠키) 없이 보내서 계정이 여러 개여도 막히지 않습니다
+  function run(fn) {
+    var args = Array.prototype.slice.call(arguments, 1);
+    return fetch(API_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify({ fn: fn, args: args }),
+      credentials: 'omit',
+      redirect: 'follow'
+    }).then(function (res) {
+      if (!res.ok) throw new Error('서버에 연결하지 못했습니다. 잠시 후 다시 시도해 주세요.');
+      return res.json();
+    }, function () {
+      throw new Error('인터넷 연결을 확인한 뒤 다시 시도해 주세요.');
+    }).then(function (out) {
+      if (!out || !out.ok) throw new Error(((out && out.error) || '요청을 처리하지 못했습니다.').replace(/^Error:\s*/, ''));
+      return out.data;
+    });
+  }
+  var toastTimer;
+  function toast(msg) {
+    var t = document.getElementById('toast');
+    t.textContent = msg; t.classList.remove('hidden');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function () { t.classList.add('hidden'); }, 2600);
+  }
+  function header(sub, right) {
+    return '<header class="topbar"><div class="topbar-in">' +
+      '<a class="brand" href="' + esc(BOOT.baseUrl) + (BOOT.mode === 'admin' ? '?admin=1' : '') + '">' +
+      '<span class="brand-mark">' + icon('building') + '<span class="sub">' + icon('wrench') + '</span></span>' +
+      '<span><span class="brand-name">' + esc(C.headerBrand) + '</span><span class="brand-sub">' + esc(sub) + '</span></span></a>' +
+      (right || '') + '</div></header>';
+  }
+
+  // ── 사진 줄이기 (휴대폰 원본 사진은 크기가 커서 보내기 전에 줄입니다) ──
+  function shrinkPhoto(file) {
+    return new Promise(function (resolve, reject) {
+      if (!file || !/^image\//.test(file.type || 'image/')) { reject(new Error('사진 파일만 첨부할 수 있어요.')); return; }
+      var url = URL.createObjectURL(file);
+      var img = new Image();
+      img.onload = function () {
+        var max = 1600, w = img.naturalWidth, h = img.naturalHeight;
+        var scale = Math.min(1, max / Math.max(w, h));
+        var canvas = document.createElement('canvas');
+        canvas.width = Math.round(w * scale); canvas.height = Math.round(h * scale);
+        var ctx = canvas.getContext('2d');
+        ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        URL.revokeObjectURL(url);
+        resolve(canvas.toDataURL('image/jpeg', 0.82));
+      };
+      img.onerror = function () { URL.revokeObjectURL(url); reject(new Error('이 사진은 열 수 없어요. 다른 사진으로 다시 선택해 주세요.')); };
+      img.src = url;
+    });
+  }
+
+  // ══════════════════════════════════════════
+  // 신청 화면
+  // ══════════════════════════════════════════
+  var form = { types: [], other: false, incident: '', photos: { overview: null, closeup: null }, names: {} };
+
+  function renderPublic() {
+    document.title = C.headerProductName + ' | ' + C.headerBrand;
+    var steps = [['01', C.step1Title, C.step1Description], ['02', C.step2Title, C.step2Description], ['03', C.step3Title, C.step3Description]];
+    root.innerHTML =
+      header(C.headerProductName, '<span class="badge-top">' + icon('shield') + ' ' + esc(C.headerBadge) + '</span>') +
+      '<main class="page">' +
+        '<div class="intro">' +
+          '<p class="eyebrow">' + esc(C.heroEyebrow) + '</p>' +
+          '<h1 class="hero-title">' + esc(C.heroTitle) + '</h1>' +
+          '<p class="hero-desc">' + esc(C.heroDescription) + '</p>' +
+          '<div class="steps">' + steps.map(function (s) {
+            return '<div class="step"><span class="step-num">' + s[0] + '</span><div><p class="step-title">' + esc(s[1]) + '</p><p class="step-desc">' + esc(s[2]) + '</p></div></div>';
+          }).join('') + '</div>' +
+          '<div class="safety">' + esc(C.safetyNotice) + '</div>' +
+        '</div>' +
+        '<div id="formArea"></div>' +
+      '</main>' +
+      '<footer>' + esc(C.footerText) + '</footer>';
+    renderForm();
+  }
+
+  function renderForm() {
+    var area = document.getElementById('formArea');
+    var incidents = [
+      ['self_or_companion', C.incidentOptionSelf], ['witnessed_other', C.incidentOptionWitnessed],
+      ['found_damage', C.incidentOptionFound], ['unknown', C.incidentOptionUnknown]
+    ];
+    var locOptions = '<option value="" disabled selected>' + esc(C.locationPlaceholder) + '</option>' +
+      S.locationGroups.map(function (g) {
+        return '<optgroup label="' + esc(g.label) + '">' + g.places.map(function (p) {
+          var v = g.label + ' — ' + p;
+          return '<option value="' + esc(v) + '">' + esc(v) + '</option>';
+        }).join('') + '</optgroup>';
+      }).join('') +
+      '<option value="기타">' + esc(C.otherLocationLabel) + '</option>';
+
+    area.innerHTML =
+      '<form class="card" id="repairForm" novalidate>' +
+        '<div class="form-head"><div class="form-head-row"><div>' +
+          '<p class="form-eyebrow">' + esc(C.formEyebrow) + '</p>' +
+          '<h2 class="form-title">' + esc(C.formTitle) + '</h2></div>' + icon('camera', 'cam') + '</div>' +
+          '<p class="req-note"><span class="req">*</span> ' + esc(C.requiredNotice) + '</p>' +
+        '</div>' +
+        '<div class="form-body">' +
+          '<fieldset><legend class="section-label"><span>1</span> ' + esc(C.applicantSectionTitle) + '</legend>' +
+            '<div class="grid2">' +
+              '<label class="field-label">' + esc(C.nameLabel) + ' <b>*</b><input class="input" name="applicantName" autocomplete="name" maxlength="50" placeholder="' + esc(C.namePlaceholder) + '"></label>' +
+              '<label class="field-label">' + esc(C.phoneLabel) + ' <b>*</b><input class="input" name="phone" type="tel" inputmode="tel" autocomplete="tel" maxlength="30" placeholder="' + esc(C.phonePlaceholder) + '"></label>' +
+            '</div></fieldset>' +
+
+          '<fieldset><legend class="section-label"><span>2</span> ' + esc(C.incidentSectionTitle) + '</legend>' +
+            '<p class="field-label mt" style="margin-top:16px">' + esc(C.incidentQuestion) + ' <b>*</b></p>' +
+            '<div class="choice-list" id="incidentList">' + incidents.map(function (o) {
+              return '<label class="choice"><input type="radio" name="incidentContext" value="' + o[0] + '"><span>' + esc(o[1]) + '</span></label>';
+            }).join('') + '</div>' +
+            '<div class="examples"><p>' + esc(C.incidentExamplesTitle) + '</p><ul>' +
+              [C.incidentExample1, C.incidentExample2, C.incidentExample3].map(function (x) { return '<li>“' + esc(x) + '”</li>'; }).join('') +
+            '</ul></div>' +
+            '<label class="field-label mt">' + esc(C.detailsLabel) + ' <b>*</b><textarea class="textarea" name="details" maxlength="3000" placeholder="' + esc(C.detailsPlaceholder) + '"></textarea></label>' +
+          '</fieldset>' +
+
+          '<fieldset><legend class="section-label"><span>3</span> ' + esc(C.locationSectionTitle) + '</legend>' +
+            '<label class="field-label" style="margin-top:16px">' + esc(C.locationLabel) + ' <b>*</b><select class="select" name="location">' + locOptions + '</select></label>' +
+          '</fieldset>' +
+
+          '<fieldset><legend class="section-label"><span>4</span> ' + esc(C.repairTypeSectionTitle) + '</legend>' +
+            '<p class="hint">' + esc(C.repairTypeDescription) + '</p>' +
+            '<div class="choice-grid" id="typeList">' + S.repairTypes.map(function (t) {
+              return '<label class="choice"><input type="checkbox" name="repairTypes" value="' + esc(t) + '"><span>' + esc(t) + '</span></label>';
+            }).join('') +
+              '<label class="choice"><input type="checkbox" id="otherCheck"><span>' + esc(C.otherRepairTypeLabel) + '</span></label>' +
+            '</div>' +
+            '<input class="input hidden" id="otherType" name="otherType" maxlength="100" placeholder="' + esc(C.otherRepairTypePlaceholder) + '" style="margin-top:12px">' +
+          '</fieldset>' +
+
+          '<fieldset><legend class="section-label"><span>5</span> ' + esc(C.photoSectionTitle) + '</legend>' +
+            '<p class="hint">' + esc(C.photoDescription) + '</p>' +
+            '<div class="photos">' +
+              '<div class="photo-box" id="box-overview"></div>' +
+              '<div class="photo-box" id="box-closeup"></div>' +
+            '</div>' +
+          '</fieldset>' +
+
+          '<label class="cost"><input type="checkbox" name="costNoticeConfirmed"><span>' + esc(S.costNotice) + '</span></label>' +
+          '<p class="alert hidden" id="formError" role="alert"></p>' +
+        '</div>' +
+        '<div class="form-foot"><button class="btn-primary" type="submit" id="submitBtn">' +
+          icon('send') + ' <span>' + esc(C.submitButton) + '</span> ' + icon('chevron') + '</button></div>' +
+      '</form>';
+
+    renderPhotoBox('overview');
+    renderPhotoBox('closeup');
+
+    var f = document.getElementById('repairForm');
+    // 선택 표시
+    f.addEventListener('change', function (e) {
+      var t = e.target;
+      if (t.name === 'incidentContext') {
+        form.incident = t.value;
+        document.querySelectorAll('#incidentList .choice').forEach(function (el) {
+          el.classList.toggle('on', el.querySelector('input').checked);
+        });
+      }
+      if (t.name === 'repairTypes' || t.id === 'otherCheck') {
+        t.closest('.choice').classList.toggle('on', t.checked);
+        if (t.id === 'otherCheck') {
+          form.other = t.checked;
+          var o = document.getElementById('otherType');
+          o.classList.toggle('hidden', !t.checked);
+          if (t.checked) o.focus();
+        }
+      }
+    });
+    f.addEventListener('submit', submitForm);
+  }
+
+  function renderPhotoBox(kind) {
+    var box = document.getElementById('box-' + kind);
+    var label = kind === 'overview' ? C.overviewPhotoLabel : C.closeupPhotoLabel;
+    var desc = kind === 'overview' ? C.overviewPhotoDescription : C.closeupPhotoDescription;
+    var data = form.photos[kind];
+    if (data) {
+      box.innerHTML = '<div class="photo-preview"><img src="' + data + '" alt="' + esc(label) + ' 미리보기">' +
+        '<button type="button" class="photo-remove" aria-label="' + esc(label) + ' 삭제">' + icon('x') + '</button>' +
+        '<div class="photo-cap">' + esc(form.names[kind] || label) + '</div></div>';
+      box.querySelector('.photo-remove').onclick = function () { form.photos[kind] = null; renderPhotoBox(kind); };
+    } else {
+      box.innerHTML = '<label class="photo-pick">' +
+        '<span class="photo-icon">' + icon('imagePlus') + '</span>' +
+        '<span class="photo-name">' + esc(label) + ' <span class="req">*</span></span>' +
+        '<span class="photo-desc">' + esc(desc) + '</span>' +
+        '<span class="photo-btn">' + esc(C.photoSelectButton) + '</span>' +
+        '<input type="file" accept="image/*" capture="environment" class="sr-only"></label>';
+      box.querySelector('input').onchange = function (e) {
+        var file = e.target.files && e.target.files[0];
+        if (!file) return;
+        box.querySelector('.photo-btn').textContent = '사진을 준비하는 중…';
+        shrinkPhoto(file).then(function (dataUrl) {
+          form.photos[kind] = dataUrl;
+          form.names[kind] = file.name;
+          renderPhotoBox(kind);
+        }).catch(function (err) {
+          renderPhotoBox(kind);
+          showError(err.message);
+        });
+      };
+    }
+  }
+
+  function showError(msg) {
+    var el = document.getElementById('formError');
+    if (!el) return;
+    el.textContent = msg;
+    el.classList.toggle('hidden', !msg);
+    if (msg) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+
+  function submitForm(e) {
+    e.preventDefault();
+    var f = e.target;
+    showError('');
+    var name = f.applicantName.value.trim();
+    var phone = f.phone.value.trim();
+    var details = f.details.value.trim();
+    var location = f.location.value;
+    var types = Array.prototype.map.call(f.querySelectorAll('input[name="repairTypes"]:checked'), function (el) { return el.value; });
+    var otherType = form.other ? document.getElementById('otherType').value.trim() : '';
+
+    if (!name) return showError('이름을 입력해주세요.'), f.applicantName.focus();
+    if (!phone) return showError('연락처를 입력해주세요.'), f.phone.focus();
+    if (!form.incident) return showError('발생 경위를 선택해주세요.');
+    if (details.length < 5) return showError('당시 상황을 5자 이상 적어주세요.'), f.details.focus();
+    if (!location) return showError('수리가 필요한 장소를 선택해주세요.');
+    if (types.length === 0 && !form.other) return showError('보수 유형을 하나 이상 선택해주세요.');
+    if (form.other && !otherType) return showError('기타 보수 유형을 입력해주세요.'), document.getElementById('otherType').focus();
+    if (!form.photos.overview || !form.photos.closeup) return showError('전체 위치 사진과 문제 부위 근접 사진을 모두 첨부해주세요.');
+    if (!f.costNoticeConfirmed.checked) return showError('안내 문구를 확인하고 체크해주세요.');
+
+    var btn = document.getElementById('submitBtn');
+    btn.disabled = true;
+    btn.innerHTML = icon('loader', 'spin') + ' <span>' + esc(C.submittingText) + '</span>';
+
+    run('submitRequest', {
+      applicantName: name, phone: phone, incidentContext: form.incident, location: location,
+      details: details, repairTypes: types, otherType: otherType, costNoticeConfirmed: true,
+      overviewPhoto: form.photos.overview, closeupPhoto: form.photos.closeup
+    }).then(function (res) {
+      renderSuccess(res.reference);
+    }).catch(function (err) {
+      btn.disabled = false;
+      btn.innerHTML = icon('send') + ' <span>' + esc(C.submitButton) + '</span> ' + icon('chevron');
+      showError(err.message || '접수 중 오류가 발생했습니다.');
+    });
+  }
+
+  function renderSuccess(reference) {
+    var area = document.getElementById('formArea');
+    area.innerHTML = '<section class="card success">' +
+      '<span class="success-mark">' + icon('check') + '</span>' +
+      '<p class="eyebrow" style="margin:28px 0 0">' + esc(C.successEyebrow) + '</p>' +
+      '<h2>' + esc(C.successTitle) + '</h2>' +
+      '<p class="desc">' + esc(C.successDescription) + '</p>' +
+      '<div class="ref-box"><small>' + esc(C.referenceLabel) + '</small><strong>' + esc(reference) + '</strong></div>' +
+      '<button type="button" class="btn-outline" id="newBtn" style="margin-top:30px">' + icon('rotate') + ' ' + esc(C.newRequestButton) + '</button>' +
+      '</section>';
+    area.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    document.getElementById('newBtn').onclick = function () {
+      form = { types: [], other: false, incident: '', photos: { overview: null, closeup: null }, names: {} };
+      renderForm();
+    };
+  }
+
+  // ══════════════════════════════════════════
+  // 관리 화면
+  // ══════════════════════════════════════════
+  var TOKEN_KEY = 'tlc_repair_admin_token';
+  var admin = { token: '', list: [], statuses: ['접수', '확인 중', '수리 예정', '완료'], sheetUrl: '', query: '', filter: 'all', loading: true, error: '', photoCache: {} };
+
+  function getToken() { try { return sessionStorage.getItem(TOKEN_KEY) || ''; } catch (e) { return admin.token; } }
+  function setToken(t) { admin.token = t; try { t ? sessionStorage.setItem(TOKEN_KEY, t) : sessionStorage.removeItem(TOKEN_KEY); } catch (e) {} }
+  function toneClass(status) { return 'tone-' + String(status).split(' ')[0]; }
+
+  function handleAdminError(err) {
+    if (/LOGIN_REQUIRED/.test(err.message)) {
+      setToken('');
+      renderLogin('로그인 시간이 지났습니다. 다시 로그인해 주세요.');
+      return true;
+    }
+    return false;
+  }
+
+  function renderLogin(message) {
+    document.body.classList.add('admin-body');
+    root.innerHTML = header('시설 보수 관리') +
+      '<main class="wrap"><section class="card login-card">' +
+        '<div class="lock">' + icon('lock') + '</div>' +
+        '<h1>관리자 로그인</h1>' +
+        '<p>시설팀 관리 화면에 들어가려면 비밀번호를 입력해 주세요.</p>' +
+        '<form id="loginForm">' +
+          '<label class="field-label">비밀번호<input class="input" type="password" name="pw" autocomplete="current-password" required></label>' +
+          '<p class="alert ' + (message ? '' : 'hidden') + '" id="loginError">' + esc(message || '') + '</p>' +
+          '<button class="btn-primary" type="submit" id="loginBtn">관리 화면 열기</button>' +
+          '<a class="link-text" style="text-align:center" href="' + esc(BOOT.baseUrl) + '">신청 화면으로 돌아가기</a>' +
+        '</form></section></main>';
+    var f = document.getElementById('loginForm');
+    f.pw.focus();
+    f.onsubmit = function (e) {
+      e.preventDefault();
+      var btn = document.getElementById('loginBtn');
+      btn.disabled = true; btn.textContent = '확인 중…';
+      run('adminLogin', f.pw.value).then(function (res) {
+        setToken(res.token);
+        renderDashboard();
+        loadList();
+      }).catch(function (err) {
+        btn.disabled = false; btn.textContent = '관리 화면 열기';
+        var el = document.getElementById('loginError');
+        el.textContent = err.message; el.classList.remove('hidden');
+      });
+    };
+  }
+
+  function renderDashboard() {
+    document.body.classList.add('admin-body');
+    root.innerHTML = header('시설 보수 관리', '<button class="btn-small" id="logoutBtn" aria-label="로그아웃">' + icon('logout') + ' 로그아웃</button>') +
+      '<main class="wrap">' +
+        '<div class="admin-head"><div>' +
+          '<p class="kicker">시설팀 관리</p><h1>보수 접수 현황</h1>' +
+          '<p class="sub">접수 내용을 확인하고 처리 상태를 관리할 수 있습니다.</p></div>' +
+          '<div class="admin-links">' +
+            '<a class="link-text" href="' + esc(BOOT.baseUrl) + '">신청 화면 보기 →</a>' +
+            '<a class="btn-small hidden" id="sheetLink" target="_blank" rel="noopener">' + icon('settings') + ' 신청서 설정 (시트)</a>' +
+          '</div></div>' +
+        '<div class="stats" id="stats"></div>' +
+        '<section class="panel">' +
+          '<div class="panel-tools">' +
+            '<div class="search">' + icon('search') + '<input class="input" id="q" placeholder="접수번호, 신청자, 장소 검색" value="' + esc(admin.query) + '"></div>' +
+            '<select class="select" id="filter"><option value="all">전체 상태</option>' +
+              admin.statuses.map(function (s) { return '<option value="' + esc(s) + '"' + (admin.filter === s ? ' selected' : '') + '>' + esc(s) + '</option>'; }).join('') +
+            '</select>' +
+          '</div>' +
+          '<div id="listArea"></div>' +
+        '</section>' +
+      '</main><div id="drawerArea"></div>';
+
+    document.getElementById('logoutBtn').onclick = function () {
+      run('adminLogout', admin.token).catch(function () {});
+      setToken('');
+      renderLogin('');
+    };
+    document.getElementById('q').oninput = function (e) { admin.query = e.target.value; renderList(); };
+    document.getElementById('filter').onchange = function (e) { admin.filter = e.target.value; renderList(); };
+    renderStats();
+    renderList();
+  }
+
+  function loadList() {
+    admin.loading = true; admin.error = '';
+    renderList();
+    run('adminList', admin.token).then(function (res) {
+      admin.list = res.requests || [];
+      admin.statuses = res.statuses || admin.statuses;
+      admin.sheetUrl = res.sheetUrl;
+      admin.loading = false;
+      var link = document.getElementById('sheetLink');
+      if (link && res.sheetUrl) { link.href = res.sheetUrl; link.classList.remove('hidden'); }
+      renderStats(); renderList();
+    }).catch(function (err) {
+      if (handleAdminError(err)) return;
+      admin.loading = false; admin.error = err.message || '목록을 불러오지 못했습니다.';
+      renderList();
+    });
+  }
+
+  function todayKey() {
+    try {
+      return new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Seoul', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date());
+    } catch (e) { return new Date().toISOString().slice(0, 10); }
+  }
+
+  function renderStats() {
+    var el = document.getElementById('stats');
+    if (!el) return;
+    var l = admin.list, today = todayKey();
+    var items = [
+      ['전체 접수', l.length, 'clipboard', '#334155', '#f1f5f9'],
+      ['오늘 접수', l.filter(function (x) { return x.dateKey === today; }).length, 'calendar', '#1d4ed8', '#eff6ff'],
+      ['처리 중', l.filter(function (x) { return x.status === '확인 중' || x.status === '수리 예정'; }).length, 'wrench', '#b45309', '#fffbeb'],
+      ['완료', l.filter(function (x) { return x.status === '완료'; }).length, 'checkCircle', '#047857', '#ecfdf5']
+    ];
+    el.innerHTML = items.map(function (s) {
+      return '<div class="stat"><div class="stat-top"><p>' + s[0] + '</p><span class="stat-ic" style="color:' + s[3] + ';background:' + s[4] + '">' + icon(s[2]) + '</span></div>' +
+        '<p class="stat-num">' + (admin.loading ? '–' : s[1]) + '</p></div>';
+    }).join('');
+  }
+
+  function renderList() {
+    var area = document.getElementById('listArea');
+    if (!area) return;
+    if (admin.loading) { area.innerHTML = '<div class="loading">' + icon('loader', 'spin') + ' 접수 내역을 불러오는 중입니다.</div>'; return; }
+    if (admin.error) { area.innerHTML = '<p class="alert" style="margin:18px">' + esc(admin.error) + '</p>'; return; }
+    var q = admin.query.trim().toLowerCase();
+    var rows = admin.list.filter(function (x) {
+      var okStatus = admin.filter === 'all' || x.status === admin.filter;
+      var okQuery = !q || [x.reference, x.applicantName, x.location, x.phone].some(function (v) { return String(v).toLowerCase().indexOf(q) >= 0; });
+      return okStatus && okQuery;
+    });
+    if (!rows.length) {
+      area.innerHTML = '<div class="empty">' + icon('clipboard') + '<strong>표시할 접수 내역이 없습니다.</strong><span>검색어나 상태 필터를 확인해주세요.</span></div>';
+      area.querySelector('.empty .i').style.fontSize = '36px';
+      return;
+    }
+    area.innerHTML = '<ul class="rows">' +
+      '<li class="row row-head"><span>접수번호</span><span>신청자</span><span>장소</span><span>접수일</span><span>상태</span><span style="text-align:right">확인</span></li>' +
+      rows.map(function (x) {
+        return '<li class="row">' +
+          '<div class="row-main"><span class="row-ref">' + esc(x.reference) + '</span><span class="row-name">' + esc(x.applicantName) + '</span></div>' +
+          '<div class="row-meta"><span class="row-loc">' + esc(x.location) + '</span><span class="row-date">' + esc(x.dateLabel) + '</span>' +
+            ' <span class="pill ' + toneClass(x.status) + '">' + esc(x.status) + '</span></div>' +
+          '<div class="row-act"><button class="btn-detail" data-ref="' + esc(x.reference) + '">상세</button></div>' +
+        '</li>';
+      }).join('') + '</ul>';
+    area.querySelectorAll('.btn-detail').forEach(function (b) {
+      b.onclick = function () { openDetail(b.getAttribute('data-ref')); };
+    });
+  }
+
+  function openDetail(reference) {
+    var x = admin.list.filter(function (r) { return r.reference === reference; })[0];
+    if (!x) return;
+    var area = document.getElementById('drawerArea');
+    area.innerHTML = '<div class="drawer-bg" id="drawerBg"></div>' +
+      '<aside class="drawer" role="dialog" aria-modal="true" aria-label="접수 상세 내용">' +
+        '<div class="drawer-head"><div><small>' + esc(x.reference) + '</small><h2>접수 상세 내용</h2></div>' +
+          '<button class="x-btn" id="closeDrawer" aria-label="닫기">' + icon('x') + '</button></div>' +
+        '<div class="drawer-body">' +
+          '<div class="two">' +
+            '<div class="mini">' + icon('user') + '<small>신청자</small><span class="val">' + esc(x.applicantName) + '</span></div>' +
+            '<div class="mini">' + icon('phone') + '<small>연락처</small><a class="val" href="tel:' + esc(x.phone.replace(/[^0-9+]/g, '')) + '">' + esc(x.phone) + '</a></div>' +
+          '</div>' +
+          '<div><p class="d-title">접수 일시</p><p class="d-box">' + esc(x.dateTimeLabel) + '</p></div>' +
+          '<div><p class="d-title">발생 경위</p><p class="d-box green">' + esc(x.incident) + '</p></div>' +
+          '<div><p class="d-title">' + icon('pin') + ' 문제 위치</p><p class="d-box">' + esc(x.location) + '</p></div>' +
+          '<div><p class="d-title">보수 유형</p><div class="tags">' + x.repairTypes.map(function (t) { return '<span class="tag">' + esc(t) + '</span>'; }).join('') + '</div></div>' +
+          '<div><p class="d-title">문제 내용</p><p class="d-box">' + esc(x.details) + '</p></div>' +
+          '<div><p class="d-title">' + icon('image') + ' 현장 사진</p><div class="shots">' +
+            [['overview', '전체 위치'], ['closeup', '문제 부위']].map(function (k) {
+              return '<button type="button" class="shot" data-kind="' + k[0] + '"><div class="ph">' + (x.hasPhotos ? '불러오는 중…' : '사진 없음') + '</div><span>' + k[1] + ' 사진</span></button>';
+            }).join('') + '</div></div>' +
+          '<div><p class="d-title">처리 상태</p><select class="select" id="statusSel">' +
+            admin.statuses.map(function (s) { return '<option' + (s === x.status ? ' selected' : '') + '>' + esc(s) + '</option>'; }).join('') +
+          '</select></div>' +
+        '</div></aside>';
+
+    function close() { area.innerHTML = ''; document.removeEventListener('keydown', onKey); }
+    function onKey(e) { if (e.key === 'Escape') close(); }
+    document.addEventListener('keydown', onKey);
+    document.getElementById('drawerBg').onclick = close;
+    document.getElementById('closeDrawer').onclick = close;
+
+    var sel = document.getElementById('statusSel');
+    sel.onchange = function () {
+      var next = sel.value, prev = x.status;
+      sel.disabled = true;
+      run('adminUpdateStatus', admin.token, x.reference, next).then(function () {
+        x.status = next; sel.disabled = false;
+        renderStats(); renderList();
+        toast('처리 상태를 바꿨습니다: ' + next);
+      }).catch(function (err) {
+        if (handleAdminError(err)) return;
+        sel.value = prev; sel.disabled = false;
+        toast(err.message || '상태를 변경하지 못했습니다.');
+      });
+    };
+
+    if (x.hasPhotos) {
+      area.querySelectorAll('.shot').forEach(function (btn) {
+        var kind = btn.getAttribute('data-kind');
+        var key = x.reference + ':' + kind;
+        var show = function (src) {
+          btn.querySelector('.ph').outerHTML = '<img src="' + src + '" alt="' + (kind === 'overview' ? '전체 위치' : '문제 부위') + ' 사진">';
+          btn.onclick = function () { openLight(src); };
+        };
+        if (admin.photoCache[key]) { show(admin.photoCache[key]); return; }
+        run('adminPhoto', admin.token, x.reference, kind).then(function (src) {
+          admin.photoCache[key] = src;
+          if (document.body.contains(btn)) show(src);
+        }).catch(function (err) {
+          if (handleAdminError(err)) return;
+          var ph = btn.querySelector('.ph'); if (ph) ph.textContent = '사진을 불러오지 못했습니다';
+        });
+      });
+    }
+  }
+
+  function openLight(src) {
+    var d = document.createElement('div');
+    d.className = 'light';
+    d.innerHTML = '<img src="' + src + '" alt="사진 크게 보기"><button class="x-btn" aria-label="닫기">' + icon('x') + '</button>';
+    d.onclick = function () { d.remove(); };
+    document.body.appendChild(d);
+  }
+
+  // ── 시작: 장소·보수 유형·문구를 먼저 불러옵니다 ─────────────
+  function start() {
+    root.innerHTML = '<div class="loading" style="min-height:70vh">' + icon('loader', 'spin') + ' 화면을 준비하고 있습니다.</div>';
+    run('getPublicSettings').then(function (settings) {
+      S = settings; C = settings.content;
+      if (BOOT.mode === 'admin') {
+        admin.token = getToken();
+        if (admin.token) { renderDashboard(); loadList(); } else { renderLogin(''); }
+      } else {
+        renderPublic();
+      }
+    }).catch(function (err) {
+      root.innerHTML = '<main class="wrap"><section class="card login-card"><h1>화면을 불러오지 못했습니다</h1>' +
+        '<p>' + esc(err.message) + '</p><button class="btn-primary" id="retryBtn" type="button">다시 시도</button></section></main>';
+      document.getElementById('retryBtn').onclick = start;
+    });
+  }
+  start();
+})();
+</script>
+</body>
+</html>
